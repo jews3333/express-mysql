@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  state = {
+    username:null,
+    users:null
+  }
+
+  componentDidMount(){
+    fetch('/api/getUsername')
+    .then(res => res.json())
+    .then(user => this.setState({username: user.username}));
+
+    fetch('/getData')
+    .then(res => res.json())
+    .then(user => this.setState({users : user}));
+  }
+
+  renderUser = () => {
+    const users = this.state.users.map((user, index) => {
+      return <div key={index}>{user.id},{user.description},{user.title},{user.author}</div>
+    })
+    return users
+  }
+
+  render(){
+
+    const { username, users } = this.state;
+
+    return (
+      <div className="App">
+        <p>{username ? <h1>{`Hellow ${username}`}</h1> : <h1>Loading...</h1>}</p>
+        <p>{users ? <p>{this.renderUser()}</p> : null}</p>
+      </div>
+    );
+  }
 }
 
 export default App;
